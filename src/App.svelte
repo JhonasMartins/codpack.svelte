@@ -1,6 +1,6 @@
 <script>
   import { Button } from '$lib/components/ui/button/index.js'
-  import { Copy, Eye, Star, Bell, User, Settings, HelpCircle, LogOut, Download } from '@lucide/svelte'
+  import { Copy, Eye, Star, Bell, User, Settings, HelpCircle, LogOut, Download, Home, LayoutDashboard, FileText, Code2, Image as ImageIcon, Plug } from '@lucide/svelte'
 
   // Estado do dropdown do avatar
   let showDropdown = false
@@ -374,10 +374,72 @@
   <!-- Sidebar fino -->
   <aside class="row-start-2 col-start-1 border-r bg-sidebar text-sidebar-foreground">
     <div class="flex h-full w-16 flex-col items-center py-3 gap-3">
-      <div class="size-9 rounded-md bg-muted" title="Início"></div>
-      <div class="size-9 rounded-md bg-muted" title="Biblioteca"></div>
-      <div class="size-9 rounded-md bg-muted" title="Busca"></div>
-      <div class="mt-auto size-9 rounded-md bg-muted" title="Perfil"></div>
+      <!-- Navegação principal -->
+      <button
+        type="button"
+        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+        aria-label="Início"
+        title="Início"
+        on:click={() => { currentView = 'home' }}
+      >
+        <Home class="w-4 h-4" />
+      </button>
+
+      <!-- Categorias do projeto -->
+      <button
+        type="button"
+        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+        aria-label="Seções"
+        title="Seções"
+        aria-pressed={currentView === 'list' && selectedListType === 'secoes'}
+        on:click={() => openList('secoes')}
+      >
+        <LayoutDashboard class="w-4 h-4" />
+      </button>
+      <button
+        type="button"
+        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+        aria-label="Páginas"
+        title="Páginas"
+        aria-pressed={currentView === 'list' && selectedListType === 'paginas'}
+        on:click={() => openList('paginas')}
+      >
+        <FileText class="w-4 h-4" />
+      </button>
+      <button
+        type="button"
+        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+        aria-label="Códigos"
+        title="Códigos"
+        aria-pressed={currentView === 'list' && selectedListType === 'codigos'}
+        on:click={() => openList('codigos')}
+      >
+        <Code2 class="w-4 h-4" />
+      </button>
+      <button
+        type="button"
+        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+        aria-label="Mockups"
+        title="Mockups"
+        aria-pressed={currentView === 'list' && selectedListType === 'mockups'}
+        on:click={() => openList('mockups')}
+      >
+        <ImageIcon class="w-4 h-4" />
+      </button>
+      <button
+        type="button"
+        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+        aria-label="Plugins"
+        title="Plugins"
+        aria-pressed={currentView === 'list' && selectedListType === 'plugins'}
+        on:click={() => openList('plugins')}
+      >
+        <Plug class="w-4 h-4" />
+      </button>
+
+      <div class="mt-auto size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors" title="Perfil" aria-label="Perfil">
+        <User class="w-4 h-4" />
+      </div>
     </div>
   </aside>
 
