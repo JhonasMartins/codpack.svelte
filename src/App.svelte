@@ -1,6 +1,6 @@
 <script>
   import { Button } from '$lib/components/ui/button/index.js'
-  import { Copy, Eye, Star, Bell, User, Settings, HelpCircle, LogOut } from '@lucide/svelte'
+  import { Copy, Eye, Star, Bell, User, Settings, HelpCircle, LogOut, Download } from '@lucide/svelte'
 
   // Estado do dropdown do avatar
   let showDropdown = false
@@ -116,6 +116,46 @@
   }
   function onView(url) {
     window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
+  // Download para Mockups e Plugins
+  function downloadDataUrl(dataUrl, filename = 'download.svg') {
+    const a = document.createElement('a')
+    a.href = dataUrl
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+  }
+
+  function onDownload(item) {
+    try {
+      if (item?.downloadUrl) {
+        const a = document.createElement('a')
+        a.href = item.downloadUrl
+        a.download = (item.title?.replaceAll(' ', '_').toLowerCase() || 'download')
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        return
+      }
+      if (item?.img && typeof item.img === 'string' && item.img.startsWith('data:')) {
+        const filename = `${(item.title || 'download')}.svg`
+        downloadDataUrl(item.img, filename)
+        return
+      }
+      if (item?.img) {
+        const a = document.createElement('a')
+        a.href = item.img
+        a.target = '_blank'
+        a.rel = 'noopener'
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+      }
+    } catch (e) {
+      console.error('Falha ao iniciar download', e)
+    }
   }
 
   const sections = [
@@ -320,7 +360,8 @@
             <h2 class="text-xl font-semibold">{selectedItem?.title}</h2>
             <p class="text-xs text-muted-foreground capitalize">{selectedType}</p>
           </div>
-          <Button variant="outline" size="sm" class="" disabled={false} on:click={goBack}>Voltar</Button>
+-          <Button variant="outline" size="sm" class="" disabled={false} on:click={goBack}>Voltar</Button>
++          <button type="button" class="h-8 px-3 rounded-md border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground text-sm" on:click={goBack} aria-label="Voltar para a página inicial">Voltar</button>
         </div>
     
         <div class="grid gap-6 lg:grid-cols-5">
@@ -341,14 +382,18 @@
           <aside class="lg:col-span-1">
             <div class="border rounded-lg p-4 bg-card space-y-4">
               <div class="flex gap-2">
-                <Button class="flex-1" disabled={false} on:click={() => onCopy(selectedItem.copyText || selectedItem.title)}>Copiar</Button>
-                <button class="size-9 grid place-items-center rounded-md border hover:bg-accent transition-colors" aria-label="Favoritar" title="Favoritar" on:click={() => toggleFavorite(selectedItem.id)}>
-                  {#if isFav(selectedItem.id)}
-                    <Star class="size-4 text-yellow-500" fill="currentColor" />
-                  {:else}
-                    <Star class="size-4" />
-                  {/if}
-                </button>
+                {#if selectedType === 'mockups' || selectedType === 'plugins'}
+                  <Button class="flex-1" disabled={false} on:click={() => onDownload(selectedItem)}>Download</Button>
+                {:else}
+                  <Button class="flex-1" disabled={false} on:click={() => onCopy(selectedItem.copyText || selectedItem.title)}>Copiar</Button>
+                {/if}
+                 <button class="size-9 grid place-items-center rounded-md border hover:bg-accent transition-colors" aria-label="Favoritar" title="Favoritar" on:click={() => toggleFavorite(selectedItem.id)}>
+                   {#if isFav(selectedItem.id)}
+                     <Star class="size-4 text-yellow-500" fill="currentColor" />
+                   {:else}
+                     <Star class="size-4" />
+                   {/if}
+                 </button>
               </div>
               <div>
                 <h3 class="font-semibold">{selectedItem.title}</h3>
@@ -410,10 +455,14 @@
                 <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <!-- Ações -->
                 <div class="absolute top-2 right-2 flex gap-2 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
-                  <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Copiar" title="Copiar" on:click|stopPropagation={() => onCopy(item.title)}>
-                    <Copy class="size-4" />
+                  <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label={sec.key === 'mockups' || sec.key === 'plugins' ? 'Download' : 'Copiar'} title={sec.key === 'mockups' || sec.key === 'plugins' ? 'Download' : 'Copiar'} on:click|stopPropagation={() => (sec.key === 'mockups' || sec.key === 'plugins') ? onDownload(item) : onCopy(item.title)}>
+                    {#if sec.key === 'mockups' || sec.key === 'plugins'}
+                      <Download class="size-4" />
+                    {:else}
+                      <Copy class="size-4" />
+                    {/if}
                   </button>
-                  <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Visualizar" title="Visualizar" on:click|stopPropagation={() => onView(item.img)}>
+                  <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Visualizar" title="Visualizar" on:click|stopPropagation={() => openDetail(item, sec.key)}>
                     <Eye class="size-4" />
                   </button>
                   <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Favoritar" title="Favoritar" on:click|stopPropagation={() => toggleFavorite(item.id)}>
