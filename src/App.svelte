@@ -87,11 +87,21 @@
     title: `CSS ${i + 1}`,
     img: svgThumb(`CSS ${i + 1}`, cores[(i + 2) % cores.length])
   }))
-  const mockups = Array.from({ length: 8 }, (_, i) => ({
-    id: `mkp-${i + 1}`,
-    title: `Mockup ${i + 1}`,
-    img: svgThumb(`Mockup/Plugin ${i + 1}`, cores[(i + 3) % cores.length])
-  }))
+-  const mockups = Array.from({ length: 8 }, (_, i) => ({
+-    id: `mkp-${i + 1}`,
+-    title: `Mockup ${i + 1}`,
+-    img: svgThumb(`Mockup/Plugin ${i + 1}`, cores[(i + 3) % cores.length])
+-  }))
++  const mockups = Array.from({ length: 8 }, (_, i) => ({
++    id: `mkp-${i + 1}`,
++    title: `Mockup ${i + 1}`,
++    img: svgThumb(`Mockup ${i + 1}`, cores[(i + 3) % cores.length])
++  }))
++  const plugins = Array.from({ length: 8 }, (_, i) => ({
++    id: `plg-${i + 1}`,
++    title: `Plugin ${i + 1}`,
++    img: svgThumb(`Plugin ${i + 1}`, cores[(i + 4) % cores.length])
++  }))
 
   // Favoritos
   let favorites = new Set()
@@ -117,8 +127,48 @@
     { key: 'secoes', label: 'Seções', items: secoes },
     { key: 'paginas', label: 'Páginas', items: paginas },
     { key: 'codigos', label: 'Códigos CSS', items: codigos },
-    { key: 'mockups', label: 'Mockups e plugins', items: mockups },
+    { key: 'mockups', label: 'Mockups', items: mockups },
+    { key: 'plugins', label: 'Plugins', items: plugins },
   ]
+
+  // Novo estado para página de detalhes
+  let currentView = 'home'
+  let selectedItem = null
+  let selectedType = null
+  let commentsById = {}
+  let commentInput
+
+  function openDetail(item, type) {
+    selectedType = type
+    selectedItem = {
+      ...item,
+      type,
+      name: item.title,
+-      description: `Este ${type === 'codigos' ? 'snippet CSS' : type === 'paginas' ? 'layout de página' : 'bloco de seção'} é um exemplo gerado localmente para demonstração.`,
+-      tags: type === 'codigos' ? ['css', 'utilitário', 'layout'] : type === 'paginas' ? ['landing', 'marketing'] : ['hero', 'grid', 'cta'],
++      description: `Este ${type === 'codigos' ? 'snippet CSS' : type === 'paginas' ? 'layout de página' : type === 'mockups' ? 'mockup' : type === 'plugins' ? 'plugin' : 'bloco de seção'} é um exemplo gerado localmente para demonstração.`,
++      tags: type === 'codigos' ? ['css', 'utilitário', 'layout'] : type === 'paginas' ? ['landing', 'marketing'] : type === 'mockups' ? ['mockup', 'protótipo', 'ui'] : type === 'plugins' ? ['plugin', 'widget', 'elementor'] : ['hero', 'grid', 'cta'],
+      copyText: item.title
+    }
+    currentView = 'detail'
+    closeDropdown()
+  }
+
+  function goBack() {
+    currentView = 'home'
+  }
+
+  function addComment(text) {
+    if (!text || !selectedItem) return
+    const id = selectedItem.id
+    const list = commentsById[id] ? [...commentsById[id]] : []
+    list.push({ text, date: new Date().toISOString() })
+    commentsById = { ...commentsById, [id]: list }
+  }
+
+  function getComments() {
+    return selectedItem && commentsById[selectedItem.id] ? commentsById[selectedItem.id] : []
+  }
 </script>
 
 <div class="h-screen w-full overflow-hidden grid" style="grid-template-rows: 56px 1fr; grid-template-columns: 64px 1fr;" on:click={closeDropdown}>
@@ -126,12 +176,12 @@
   <header class="row-start-1 col-start-1 col-span-2 border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/60 relative z-[10000]">
     <div class="h-14 flex items-center justify-between px-4">
       <!-- Logo -->
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-          <span class="text-primary-foreground font-bold text-sm">C</span>
-        </div>
-        <span class="font-semibold text-lg">Codpack</span>
+      <button class="flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-primary rounded-md" on:click={goBack} aria-label="Ir para a página inicial">
+      <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
+      <span class="text-primary-foreground font-bold text-sm">C</span>
       </div>
+      <span class="font-semibold text-lg">Codpack</span>
+      </button>
       
       <!-- Lado direito: Notificações + Avatar -->
       <div class="flex items-center gap-3">
@@ -270,49 +320,126 @@
 
   <!-- Conteúdo -->
   <main class="row-start-2 col-start-2 p-6 space-y-8 overflow-auto">
-    <!-- Boas-vindas -->
-    <section class="space-y-1">
-      <h1 class="text-2xl font-bold">Bem-vindo, {user.name} 👋</h1>
-      <p class="text-muted-foreground">Explore os recursos do Codpack para agilizar seus projetos no Elementor Pro.</p>
-    </section>
-
-    <!-- Listas horizontais -->
-    {#each sections as sec}
-      <section class="space-y-3">
+    {#if currentView === 'detail'}
+      <section class="space-y-4">
         <div class="flex items-center justify-between">
-          <h2 class="text-lg font-semibold">{sec.label}</h2>
-          <Button class="" disabled={false} size="sm" variant="ghost">Ver todos</Button>
+          <div class="space-y-1">
+            <h2 class="text-xl font-semibold">{selectedItem?.title}</h2>
+            <p class="text-xs text-muted-foreground capitalize">{selectedType}</p>
+          </div>
+          <Button variant="outline" size="sm" class="" disabled={false} on:click={goBack}>Voltar</Button>
         </div>
-        <div class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 scrollbar-hide" style="scroll-behavior: smooth;">
-          {#each sec.items.slice(0, 8) as item}
-            <article class="snap-start group relative w-[calc(33.333%-0.75rem)] min-w-[280px] aspect-[16/10] rounded-lg overflow-hidden bg-muted select-none">
-              <img src={item.img} alt={item.title} class="h-full w-full object-cover" draggable={false} />
-              <!-- Overlay no hover -->
-              <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <!-- Ações -->
-              <div class="absolute top-2 right-2 flex gap-2 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
-                <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Copiar" title="Copiar" on:click={() => onCopy(item.title)}>
-                  <Copy class="size-4" />
-                </button>
-                <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Visualizar" title="Visualizar" on:click={() => onView(item.img)}>
-                  <Eye class="size-4" />
-                </button>
-                <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Favoritar" title="Favoritar" on:click={() => toggleFavorite(item.id)}>
-                  {#if isFav(item.id)}
+    
+        <div class="grid gap-6 lg:grid-cols-5">
+          <!-- Coluna esquerda (80%) -->
+          <div class="lg:col-span-4">
+            <div class="relative rounded-lg border bg-muted/40 overflow-hidden">
+              {#if selectedItem?.previewUrl}
+                <iframe src={selectedItem.previewUrl} title="Preview"
+                  class="w-full h-[60vh] pointer-events-none"></iframe>
+                {:else if selectedItem?.img}
+                  <img src={selectedItem.img} alt={selectedItem.title}
+                    class="w-full h-[60vh] object-cover select-none pointer-events-none" />
+                {/if}
+              </div>
+            </div>
+    
+          <!-- Coluna direita (20%) -->
+          <aside class="lg:col-span-1">
+            <div class="border rounded-lg p-4 bg-card space-y-4">
+              <div class="flex gap-2">
+                <Button class="flex-1" disabled={false} on:click={() => onCopy(selectedItem.copyText || selectedItem.title)}>Copiar</Button>
+                <button class="size-9 grid place-items-center rounded-md border hover:bg-accent transition-colors" aria-label="Favoritar" title="Favoritar" on:click={() => toggleFavorite(selectedItem.id)}>
+                  {#if isFav(selectedItem.id)}
                     <Star class="size-4 text-yellow-500" fill="currentColor" />
                   {:else}
                     <Star class="size-4" />
                   {/if}
                 </button>
               </div>
-              <!-- Rodapé do card (título) -->
-              <div class="absolute inset-x-0 bottom-0 p-3 text-xs text-white/90 drop-shadow-sm">
-                {item.title}
+              <div>
+                <h3 class="font-semibold">{selectedItem.title}</h3>
+                <p class="text-sm text-muted-foreground mt-1">{selectedItem.description}</p>
               </div>
-            </article>
-          {/each}
+              {#if selectedItem.tags?.length}
+                <div class="flex flex-wrap gap-2">
+                  {#each selectedItem.tags as tag}
+                    <span class="text-xs px-2 py-1 rounded-md border bg-muted/40">{tag}</span>
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          </aside>
+    
+          <!-- Área inferior (100%) -->
+          <section class="lg:col-span-5 space-y-3">
+            <div class="border rounded-lg p-4 bg-card">
+              <form on:submit|preventDefault={() => { const t = commentInput?.value?.trim(); if (t) { addComment(t); commentInput.value = '' } }}>
+                <div class="flex items-start gap-2">
+                  <textarea bind:this={commentInput} class="flex-1 resize-none h-20 border rounded-md p-2 bg-background" placeholder="Escreva um comentário..."></textarea>
+                  <Button type="submit" class="" disabled={false}>Comentar</Button>
+                </div>
+              </form>
+            </div>
+            <div class="space-y-2">
+              {#if getComments().length === 0}
+                <p class="text-sm text-muted-foreground">Sem comentários ainda.</p>
+              {:else}
+                {#each getComments() as c, idx}
+                  <div class="border rounded-lg p-3 bg-card/50">
+                    <p class="text-sm">{c.text}</p>
+                    <p class="text-[10px] text-muted-foreground mt-1">{new Date(c.date).toLocaleString()}</p>
+                  </div>
+                {/each}
+              {/if}
+            </div>
+          </section>
         </div>
       </section>
-    {/each}
+    {:else}
+      <!-- Boas-vindas -->
+      <section class="space-y-1">
+        <h1 class="text-2xl font-bold">Bem-vindo, {user.name} 👋</h1>
+        <p class="text-muted-foreground">Explore os recursos do Codpack para agilizar seus projetos no Elementor Pro.</p>
+      </section>
+    
+      <!-- Listas horizontais -->
+      {#each sections as sec}
+        <section class="space-y-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-lg font-semibold">{sec.label}</h2>
+            <Button class="" disabled={false} size="sm" variant="ghost">Ver todos</Button>
+          </div>
+          <div class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 scrollbar-hide" style="scroll-behavior: smooth;">
+            {#each sec.items.slice(0, 8) as item}
+              <article class="snap-start group relative w-[calc(33.333%-0.75rem)] min-w-[280px] aspect-[16/10] rounded-lg overflow-hidden bg-muted select-none cursor-pointer" on:click={() => openDetail(item, sec.key)}>
+                <!-- Overlay no hover -->
+                <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <!-- Ações -->
+                <div class="absolute top-2 right-2 flex gap-2 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
+                  <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Copiar" title="Copiar" on:click|stopPropagation={() => onCopy(item.title)}>
+                    <Copy class="size-4" />
+                  </button>
+                  <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Visualizar" title="Visualizar" on:click|stopPropagation={() => onView(item.img)}>
+                    <Eye class="size-4" />
+                  </button>
+                  <button class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Favoritar" title="Favoritar" on:click|stopPropagation={() => toggleFavorite(item.id)}>
+                    {#if isFav(item.id)}
+                      <Star class="size-4 text-yellow-500" fill="currentColor" />
+                    {:else}
+                      <Star class="size-4" />
+                    {/if}
+                  </button>
+                </div>
+                <!-- Rodapé do card (título) -->
+                <div class="absolute inset-x-0 bottom-0 p-3 text-xs text-white/90 drop-shadow-sm">
+                  {item.title}
+                </div>
+              </article>
+            {/each}
+          </div>
+        </section>
+      {/each}
+    {/if}
   </main>
 </div>
