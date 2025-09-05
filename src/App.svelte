@@ -240,8 +240,8 @@
     <div class="h-14 flex items-center justify-between px-4">
       <!-- Logo -->
       <button class="flex items-center gap-2 group focus:outline-none focus:ring-2 focus:ring-primary rounded-md" on:click={goBack} aria-label="Ir para a página inicial">
-      <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
-      <span class="text-primary-foreground font-bold text-sm">C</span>
+      <div class="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center transition-transform group-hover:scale-105">
+        <img src="/logo.svg" alt="" aria-hidden="true" class="w-8 h-8 object-contain" />
       </div>
       <span class="font-semibold text-lg">Codpack</span>
       </button>
@@ -372,73 +372,102 @@
   </header>
 
   <!-- Sidebar fino -->
-  <aside class="row-start-2 col-start-1 border-r bg-sidebar text-sidebar-foreground">
+  <aside class="row-start-2 col-start-1 border-r bg-sidebar text-sidebar-foreground relative z-30">
     <div class="flex h-full w-16 flex-col items-center py-3 gap-3">
       <!-- Navegação principal -->
-      <button
-        type="button"
-        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-        aria-label="Início"
-        title="Início"
-        on:click={() => { currentView = 'home' }}
-      >
-        <Home class="w-4 h-4" />
-      </button>
+      <div class="relative group">
+        <button
+          type="button"
+          class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Início"
+          aria-describedby="tip-home"
+          on:click={() => { currentView = 'home' }}
+        >
+          <Home class="w-4 h-4" />
+        </button>
+        <span
+          id="tip-home"
+          role="tooltip"
+          class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-[11px] text-white opacity-0 translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0 group-focus-within:opacity-100 group-focus-within:translate-x-0 z-50"
+        >Início</span>
+      </div>
 
       <!-- Categorias do projeto -->
-      <button
-        type="button"
-        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-        aria-label="Seções"
-        title="Seções"
-        aria-pressed={currentView === 'list' && selectedListType === 'secoes'}
-        on:click={() => openList('secoes')}
-      >
-        <LayoutDashboard class="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-        aria-label="Páginas"
-        title="Páginas"
-        aria-pressed={currentView === 'list' && selectedListType === 'paginas'}
-        on:click={() => openList('paginas')}
-      >
-        <FileText class="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-        aria-label="Códigos"
-        title="Códigos"
-        aria-pressed={currentView === 'list' && selectedListType === 'codigos'}
-        on:click={() => openList('codigos')}
-      >
-        <Code2 class="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-        aria-label="Mockups"
-        title="Mockups"
-        aria-pressed={currentView === 'list' && selectedListType === 'mockups'}
-        on:click={() => openList('mockups')}
-      >
-        <ImageIcon class="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
-        aria-label="Plugins"
-        title="Plugins"
-        aria-pressed={currentView === 'list' && selectedListType === 'plugins'}
-        on:click={() => openList('plugins')}
-      >
-        <Plug class="w-4 h-4" />
-      </button>
+      <div class="relative group">
+        <button
+          type="button"
+          class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Seções"
+          aria-describedby="tip-secoes"
+          aria-pressed={currentView === 'list' && selectedListType === 'secoes'}
+          on:click={() => openList('secoes')}
+        >
+          <LayoutDashboard class="w-4 h-4" />
+        </button>
+        <span id="tip-secoes" role="tooltip" class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-[11px] text-white opacity-0 translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0 group-focus-within:opacity-100 group-focus-within:translate-x-0 z-50">Seções</span>
+      </div>
 
-      <div class="mt-auto size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors" title="Perfil" aria-label="Perfil">
-        <User class="w-4 h-4" />
+      <div class="relative group">
+        <button
+          type="button"
+          class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Páginas"
+          aria-describedby="tip-paginas"
+          aria-pressed={currentView === 'list' && selectedListType === 'paginas'}
+          on:click={() => openList('paginas')}
+        >
+          <FileText class="w-4 h-4" />
+        </button>
+        <span id="tip-paginas" role="tooltip" class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-[11px] text-white opacity-0 translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0 group-focus-within:opacity-100 group-focus-within:translate-x-0 z-50">Páginas</span>
+      </div>
+
+      <div class="relative group">
+        <button
+          type="button"
+          class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Códigos"
+          aria-describedby="tip-codigos"
+          aria-pressed={currentView === 'list' && selectedListType === 'codigos'}
+          on:click={() => openList('codigos')}
+        >
+          <Code2 class="w-4 h-4" />
+        </button>
+        <span id="tip-codigos" role="tooltip" class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-[11px] text-white opacity-0 translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0 group-focus-within:opacity-100 group-focus-within:translate-x-0 z-50">Códigos</span>
+      </div>
+
+      <div class="relative group">
+        <button
+          type="button"
+          class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Mockups"
+          aria-describedby="tip-mockups"
+          aria-pressed={currentView === 'list' && selectedListType === 'mockups'}
+          on:click={() => openList('mockups')}
+        >
+          <ImageIcon class="w-4 h-4" />
+        </button>
+        <span id="tip-mockups" role="tooltip" class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-[11px] text-white opacity-0 translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0 group-focus-within:opacity-100 group-focus-within:translate-x-0 z-50">Mockups</span>
+      </div>
+
+      <div class="relative group">
+        <button
+          type="button"
+          class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+          aria-label="Plugins"
+          aria-describedby="tip-plugins"
+          aria-pressed={currentView === 'list' && selectedListType === 'plugins'}
+          on:click={() => openList('plugins')}
+        >
+          <Plug class="w-4 h-4" />
+        </button>
+        <span id="tip-plugins" role="tooltip" class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-[11px] text-white opacity-0 translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0 group-focus-within:opacity-100 group-focus-within:translate-x-0 z-50">Plugins</span>
+      </div>
+
+      <div class="relative group mt-auto">
+        <div class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors" aria-label="Perfil">
+          <User class="w-4 h-4" />
+        </div>
+        <span id="tip-perfil" role="tooltip" class="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-2 whitespace-nowrap rounded bg-black/80 px-2 py-1 text-[11px] text-white opacity-0 translate-x-1 transition-all group-hover:opacity-100 group-hover:translate-x-0">Perfil</span>
       </div>
     </div>
   </aside>
@@ -661,5 +690,5 @@
         </section>
       {/each}
     {/if}
-  </main>
-</div>
+   </main>
+ </div>
