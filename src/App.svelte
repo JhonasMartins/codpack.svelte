@@ -476,7 +476,7 @@
         <section class="space-y-3">
           <div class="flex items-center justify-between">
             <h2 class="text-lg font-semibold">{sec.label}</h2>
-            <Button class="" disabled={false} size="sm" variant="ghost">Ver todos</Button>
+            <Button class="" disabled={false} size="sm" variant="ghost" on:click={() => openList(sec.key)}>Ver todos</Button>
           </div>
           <div class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 scrollbar-hide" style="scroll-behavior: smooth;">
             {#each sec.items.slice(0, 8) as item}
@@ -512,6 +512,95 @@
           </div>
         </section>
       {/each}
+    {:else if currentView === 'list'}
+    +      <!-- Lista dedicada por categoria -->
+    +      <section class="space-y-4">
+    +        <div class="flex items-center justify-between gap-4">
+    +          <h2 class="text-xl font-semibold">{getListLabel()}</h2>
+    +          <div class="flex items-center gap-2">
+    +            <input
+    +              type="search"
+    +              class="h-9 w-56 sm:w-64 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-primary"
+    +              placeholder={`Buscar em ${getListLabel().toLowerCase()}...`}
+    +              bind:value={listQuery}
+    +              aria-label="Buscar"
+    +            />
+    +            <button
+    +              type="button"
+    +              class="size-9 grid place-items-center rounded-md border bg-background hover:bg-accent hover:text-accent-foreground transition-colors"
+    +              on:click={() => listOnlyFavorites = !listOnlyFavorites}
+    +              aria-pressed={listOnlyFavorites}
+    +              aria-label="Apenas favoritos"
+    +              title={listOnlyFavorites ? 'Mostrando apenas favoritos' : 'Mostrar apenas favoritos'}
+    +            >
+    +              {#if listOnlyFavorites}
+    +                <Star class="size-4 text-yellow-500" fill="currentColor" />
+    +              {:else}
+    +                <Star class="size-4" />
+    +              {/if}
+    +            </button>
+    +          </div>
+    +        </div>
+    +
+    +        <!-- Grid de cards (mesmo modelo da homepage) -->
+    +        <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+    +          {#each getListItems() as item}
+    +            <article
+    +              role="button"
+    +              tabindex="0"
+    +              class="group relative aspect-[16/10] rounded-lg overflow-hidden bg-muted select-none cursor-pointer"
+    +              on:click={() => openDetail(item, selectedListType)}
+    +              on:keydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetail(item, selectedListType) } }}
+    +            >
+    +              <!-- Overlay no hover -->
+    +              <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+    +
+    +              <!-- Ações -->
+    +              <div class="absolute top-2 right-2 flex gap-2 opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
+    +                <button
+    +                  class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors"
+    +                  aria-label={(selectedListType === 'mockups' || selectedListType === 'plugins') ? 'Download' : 'Copiar'}
+    +                  title={(selectedListType === 'mockups' || selectedListType === 'plugins') ? 'Download' : 'Copiar'}
+    +                  on:click|stopPropagation={() => ((selectedListType === 'mockups' || selectedListType === 'plugins') ? onDownload(item) : onCopy(item.title))}
+    +                >
+    +                  {#if selectedListType === 'mockups' || selectedListType === 'plugins'}
+    +                    <Download class="size-4" />
+    +                  {:else}
+    +                    <Copy class="size-4" />
+    +                  {/if}
+    +                </button>
+    +                <button
+    +                  class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors"
+    +                  aria-label="Visualizar"
+    +                  title="Visualizar"
+    +                  on:click|stopPropagation={() => openDetail(item, selectedListType)}
+    +                >
+    +                  <Eye class="size-4" />
+    +                </button>
+    +                <button
+    +                  class="size-9 grid place-items-center rounded-md border bg-background/80 hover:bg-accent hover:text-accent-foreground transition-colors"
+    +                  aria-label="Favoritar"
+    +                  title="Favoritar"
+    +                  on:click|stopPropagation={() => toggleFavorite(item.id)}
+    +                >
+    +                  {#if isFav(item.id)}
+    +                    <Star class="size-4 text-yellow-500" fill="currentColor" />
+    +                  {:else}
+    +                    <Star class="size-4" />
+    +                  {/if}
+    +                </button>
+    +              </div>
+    +
+    +              <!-- Rodapé do card (título) -->
+    +              <div class="absolute inset-x-0 bottom-0 p-3 text-xs text-white/90 drop-shadow-sm">
+    +                {item.title || (selectedListType === 'mockups' ? `Mockup ${item.id?.split('-')?.[1]}` : item.id)}
+    +              </div>
+    +            </article>
+    +          {/each}
+    +        </div>
+    +      </section>
+    {:else}
+      {/if}
     {/if}
   </main>
 </div>
