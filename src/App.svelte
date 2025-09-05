@@ -202,6 +202,36 @@
   function getComments() {
     return selectedItem && commentsById[selectedItem.id] ? commentsById[selectedItem.id] : []
   }
+
+  // View de lista (páginas dedicadas)
+  let selectedListType = null
+  let listQuery = ''
+  let listOnlyFavorites = false
+
+  function openList(type) {
+    selectedListType = type
+    listQuery = ''
+    listOnlyFavorites = false
+    currentView = 'list'
+  }
+
+  function getListLabel() {
+    const sec = sections.find(s => s.key === selectedListType)
+    return sec ? sec.label : ''
+  }
+
+  function getListItems() {
+    const sec = sections.find(s => s.key === selectedListType)
+    let items = sec ? sec.items : []
+    if (listQuery && listQuery.trim()) {
+      const q = listQuery.trim().toLowerCase()
+      items = items.filter(it => it.title.toLowerCase().includes(q))
+    }
+    if (listOnlyFavorites) {
+      items = items.filter(it => isFav(it.id))
+    }
+    return items
+  }
 </script>
 
 <div class="h-screen w-full overflow-hidden grid" style="grid-template-rows: 56px 1fr; grid-template-columns: 64px 1fr;" on:click={closeDropdown}>
