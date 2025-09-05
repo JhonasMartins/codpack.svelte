@@ -489,12 +489,10 @@
           <div class="lg:col-span-4">
             <div class="relative rounded-lg border bg-muted/40 overflow-hidden">
               {#if selectedItem?.previewUrl}
-                <iframe src={selectedItem.previewUrl} title="Preview"
-                  class="w-full h-[60vh] pointer-events-none"></iframe>
-                {:else if selectedItem?.img}
-                  <img src={selectedItem.img} alt={selectedItem.title}
-                    class="w-full h-[60vh] object-cover select-none pointer-events-none" />
-                {/if}
+              <iframe src={selectedItem.previewUrl} title="Preview" class="w-full h-[60vh]"></iframe>
+              {:else}
+                <iframe src="https://codnodo.com" title="Preview" class="w-full h-[60vh]"></iframe>
+              {/if}
               </div>
             </div>
     
@@ -688,7 +686,6 @@
             {/each}
           </div>
         </section>
-      {/each}
-    {/if}
+      {/if}
    </main>
  </div>
