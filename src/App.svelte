@@ -87,21 +87,16 @@
     title: `CSS ${i + 1}`,
     img: svgThumb(`CSS ${i + 1}`, cores[(i + 2) % cores.length])
   }))
--  const mockups = Array.from({ length: 8 }, (_, i) => ({
--    id: `mkp-${i + 1}`,
--    title: `Mockup ${i + 1}`,
--    img: svgThumb(`Mockup/Plugin ${i + 1}`, cores[(i + 3) % cores.length])
--  }))
-+  const mockups = Array.from({ length: 8 }, (_, i) => ({
-+    id: `mkp-${i + 1}`,
-+    title: `Mockup ${i + 1}`,
-+    img: svgThumb(`Mockup ${i + 1}`, cores[(i + 3) % cores.length])
-+  }))
-+  const plugins = Array.from({ length: 8 }, (_, i) => ({
-+    id: `plg-${i + 1}`,
-+    title: `Plugin ${i + 1}`,
-+    img: svgThumb(`Plugin ${i + 1}`, cores[(i + 4) % cores.length])
-+  }))
+  const mockups = Array.from({ length: 8 }, (_, i) => ({
+    id: `mkp-${i + 1}`,
+    title: `Mockup ${i + 1}`,
+    img: svgThumb(`Mockup ${i + 1}`, cores[(i + 3) % cores.length])
+  }))
+  const plugins = Array.from({ length: 8 }, (_, i) => ({
+    id: `plg-${i + 1}`,
+    title: `Plugin ${i + 1}`,
+    img: svgThumb(`Plugin ${i + 1}`, cores[(i + 4) % cores.length])
+  }))
 
   // Favoritos
   let favorites = new Set()
@@ -144,10 +139,8 @@
       ...item,
       type,
       name: item.title,
--      description: `Este ${type === 'codigos' ? 'snippet CSS' : type === 'paginas' ? 'layout de página' : 'bloco de seção'} é um exemplo gerado localmente para demonstração.`,
--      tags: type === 'codigos' ? ['css', 'utilitário', 'layout'] : type === 'paginas' ? ['landing', 'marketing'] : ['hero', 'grid', 'cta'],
-+      description: `Este ${type === 'codigos' ? 'snippet CSS' : type === 'paginas' ? 'layout de página' : type === 'mockups' ? 'mockup' : type === 'plugins' ? 'plugin' : 'bloco de seção'} é um exemplo gerado localmente para demonstração.`,
-+      tags: type === 'codigos' ? ['css', 'utilitário', 'layout'] : type === 'paginas' ? ['landing', 'marketing'] : type === 'mockups' ? ['mockup', 'protótipo', 'ui'] : type === 'plugins' ? ['plugin', 'widget', 'elementor'] : ['hero', 'grid', 'cta'],
+      description: `Este ${type === 'codigos' ? 'snippet CSS' : type === 'paginas' ? 'layout de página' : type === 'mockups' ? 'mockup' : type === 'plugins' ? 'plugin' : 'bloco de seção'} é um exemplo gerado localmente para demonstração.`,
+      tags: type === 'codigos' ? ['css', 'utilitário', 'layout'] : type === 'paginas' ? ['landing', 'marketing'] : type === 'mockups' ? ['mockup', 'protótipo', 'ui'] : type === 'plugins' ? ['plugin', 'widget', 'elementor'] : ['hero', 'grid', 'cta'],
       copyText: item.title
     }
     currentView = 'detail'
