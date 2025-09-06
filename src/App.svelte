@@ -686,6 +686,7 @@
             {/each}
           </div>
         </section>
-      {/if}
-   </main>
+      {/each}
+    {/if}
+  </main>
  </div>
